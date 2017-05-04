@@ -1,6 +1,5 @@
----
 declared-services:
-  sample-node-mongo:
+  Node-mongodb:
     label: compose-for-mongodb
     plan: Standard
 applications:
@@ -14,6 +13,6 @@ applications:
   buildpack: sdk-for-nodejs
   command: npm start
   services:
-    - sample-node-mongo
+    - Node-mongodb
   env:
     OPENAPI_SPEC: /swagger/api
