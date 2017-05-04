@@ -34,10 +34,6 @@ build:
     services: ["repo"]
   hidden: ["form"]
 
-#Web IDE
-webide:
-  service_id: orion
-
 #Deployment
 deploy:
   schema:
