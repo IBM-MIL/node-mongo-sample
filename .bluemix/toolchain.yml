@@ -12,8 +12,9 @@ toolchain:
 repo:
   service_id: githubpublic
   parameters:
-    repo_url: "{{repository}}"
-    type: link
+    repo_name: '{{toolchain.name}}'
+    repo_url: 'https://github.com/IBM-MIL/node-mongo-sample.git'
+    type: clone
     has_issues: true
 
 # Pipelines
