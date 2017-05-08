@@ -2,7 +2,7 @@ stages:
 - name: Build Stage
   inputs:
   - type: git
-    branch: master
+    branch: develop
     service: ${REPO}
   jobs:
   - name: Build
@@ -26,11 +26,11 @@ stages:
     script: |-
       #!/bin/bash
       export MONGO_SERVICE_NAME=Node-mongodb
-      cf service ${MONGO_SERVICE_NAME}
-      RC=$?
-      if [ "${RC}" != 0 ]; then
+
+      if ! cf service ${MONGO_SERVICE_NAME} ; then
         cf create-service  compose-for-mongodb Standard ${MONGO_SERVICE_NAME}
       fi
+
       if ! cf app $CF_APP; then
         cf push $CF_APP
       else
