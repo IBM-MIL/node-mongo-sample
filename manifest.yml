@@ -1,7 +1,3 @@
-declared-services:
-  Node-mongodb:
-    label: compose-for-mongodb
-    plan: Standard
 applications:
 - disk_quota: 1024M
   name: nodemongosample

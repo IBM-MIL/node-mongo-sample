@@ -23,12 +23,35 @@ stages:
       organization: ${CF_ORGANIZATION}
       space: ${CF_SPACE}
       application: ${CF_APP}
-    script: "#!/bin/bash\n# Push app\n\nif ! cf app $CF_APP; then  \n  cf push $CF_APP\n\
-      else\n  OLD_CF_APP=${CF_APP}-OLD-$(date +\"%s\")\n  rollback() {\n    set +e\
-      \  \n    if cf app $OLD_CF_APP; then\n      cf logs $CF_APP --recent\n     \
-      \ cf delete $CF_APP -f\n      cf rename $OLD_CF_APP $CF_APP\n    fi\n    exit\
-      \ 1\n  }\n  set -e\n  trap rollback ERR\n  cf rename $CF_APP $OLD_CF_APP\n \
-      \ cf push $CF_APP\n  cf delete $OLD_CF_APP -f\nfi\n# Export app name and URL\
-      \ for use in later Pipeline jobs\nexport CF_APP_NAME=\"$CF_APP\"\nexport APP_URL=http://$(cf\
-      \ app $CF_APP_NAME | grep urls: | awk '{print $2}')\n# View logs\n#cf logs \"\
-      ${CF_APP}\" --recent\n"
+    script: |-
+      "#!/bin/bash
+      export MONGO_SERVICE_NAME=Node-mongodb
+      cf service ${MONGO_SERVICE_NAME}
+      RC=$?
+      if [ "${RC}" != 0 ]; then
+        cf create-service  compose-for-mongodb Standard ${MONGO_SERVICE_NAME}
+      fi
+      if ! cf app $CF_APP; then
+        cf push $CF_APP
+      else
+        OLD_CF_APP=${CF_APP}-OLD-$(date +"%s")
+        rollback() {
+          set +e
+          if cf app $OLD_CF_APP; then
+            cf logs $CF_APP --recent
+            cf delete $CF_APP -f
+            cf rename $OLD_CF_APP $CF_APP
+          fi
+          exit 1
+        }
+        set -e
+        trap rollback ERR
+        cf rename $CF_APP $OLD_CF_APP
+        cf push $CF_APP
+        cf delete $OLD_CF_APP -f
+      fi
+      # Export app name and URL for use in later Pipeline jobs
+      export CF_APP_NAME="$CF_APP"
+      export APP_URL=http://$(cf app $CF_APP_NAME | grep urls: | awk '{print $2}')
+      # View logs
+      #cf logs "${CF_APP}" --recent
