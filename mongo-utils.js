@@ -16,9 +16,14 @@ module.exports = function () {
     		ssl: true,
     		sslValidate: true,
     		sslCA: mongoCa,
-    		poolSize: 1,
+    		poolSize: 5,
     		reconnectTries: 1
-    	}
+    	}, server: {
+        auto_reconnect: true
+      }, db: {
+        numberOfRetries: 24,
+        retryMiliSeconds: 5000
+      }
     };
     MongoClient.connect(mongoCredentials.uri, mongoClientConfig, (err, db) => {
     	if(err) {

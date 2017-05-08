@@ -24,7 +24,7 @@ stages:
       space: ${CF_SPACE}
       application: ${CF_APP}
     script: |-
-      "#!/bin/bash
+      #!/bin/bash
       export MONGO_SERVICE_NAME=Node-mongodb
       cf service ${MONGO_SERVICE_NAME}
       RC=$?
